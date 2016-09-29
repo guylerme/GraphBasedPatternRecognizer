@@ -13,8 +13,9 @@ public class XmlSchemaImporterTest {
 
 	@Test
 	public final void loadXmlFileTest() {
-		String path = "C:/Users/cy85/Documents/Doutorado/Tese/Graph Based Pattern Recognizer/example1.refontouml";
-
+		// String path = "C:/Users/cy85/Documents/Doutorado/Tese/Graph Based
+		// Pattern Recognizer/example1.refontouml";
+		String path = "/Users/Guylerme/Documents/Guylerme/Estudo/Doutorado/Tese/Graph Grammar/example1.refontouml";
 		XmlSchemaImporter importer = new XmlSchemaImporter();
 
 		try {
@@ -26,15 +27,17 @@ public class XmlSchemaImporterTest {
 
 	@Test
 	public final void importXmlSchemaToModelTest() {
-		String path = "C:/Users/cy85/Documents/Doutorado/Tese/Graph Based Pattern Recognizer/example1.refontouml";
+		// String path = "C:/Users/cy85/Documents/Doutorado/Tese/Graph Based
+		// Pattern Recognizer/example1.refontouml";
+		String path = "/Users/Guylerme/Documents/Guylerme/Estudo/Doutorado/Tese/Graph Grammar/example1.refontouml";
 
 		XmlSchemaImporter importer = new XmlSchemaImporter();
 
 		try {
-			assertNotNull(importer.importXmlSchemaToModel(importer
-					.loadXmlFile(path)));
+			assertNotNull(importer.importXmlSchemaToModel(importer.loadXmlFile(path)));
 		} catch (FileNotFoundException e) {
 			fail("File not found Exception");
 		}
 	}
+
 }

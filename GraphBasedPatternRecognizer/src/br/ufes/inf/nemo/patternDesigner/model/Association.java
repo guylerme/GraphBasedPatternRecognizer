@@ -2,22 +2,22 @@ package br.ufes.inf.nemo.patternDesigner.model;
 
 public class Association extends ModelingElement {
 
-	private Class origin;
-	private Class destiny;
+	private ModelingElement origin;
+	private ModelingElement destiny;
 
-	public Class getOrigin() {
+	public ModelingElement getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(Class origin) {
+	public void setOrigin(ModelingElement origin) {
 		this.origin = origin;
 	}
 
-	public Class getDestiny() {
+	public ModelingElement getDestiny() {
 		return destiny;
 	}
 
-	public void setDestiny(Class destiny) {
+	public void setDestiny(ModelingElement destiny) {
 		this.destiny = destiny;
 	}
 

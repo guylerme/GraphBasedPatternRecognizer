@@ -20,7 +20,7 @@ public class InstantiableTypes {
 	public static final String MATERIALRELATION = "materialassociation";
 	public static final String COMPONENTOF = "componentof";
 	public static final String MEMBEROF = "memberof";
-	public static final String SUBCOLECTIONOF = "subcolectionof";
+	public static final String SUBCOLLECTIONOF = "subcolectionof";
 	public static final String SUBQUANTITYOF = "subquantityof";
 	public static final String GENERALIZATIONSET = "generalizationset";
 

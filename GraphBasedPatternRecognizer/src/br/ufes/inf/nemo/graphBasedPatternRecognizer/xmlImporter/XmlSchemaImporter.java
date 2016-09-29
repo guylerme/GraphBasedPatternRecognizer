@@ -12,10 +12,17 @@ import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
 import br.ufes.inf.nemo.ontoUml.model.Category;
+import br.ufes.inf.nemo.ontoUml.model.Characterization;
 import br.ufes.inf.nemo.ontoUml.model.Collective;
+import br.ufes.inf.nemo.ontoUml.model.ComponentOf;
+import br.ufes.inf.nemo.ontoUml.model.Derivation;
+import br.ufes.inf.nemo.ontoUml.model.DomainFormalRelation;
 import br.ufes.inf.nemo.ontoUml.model.Generalization;
 import br.ufes.inf.nemo.ontoUml.model.InstantiableTypes;
 import br.ufes.inf.nemo.ontoUml.model.Kind;
+import br.ufes.inf.nemo.ontoUml.model.MaterialRelation;
+import br.ufes.inf.nemo.ontoUml.model.Mediation;
+import br.ufes.inf.nemo.ontoUml.model.MemberOf;
 import br.ufes.inf.nemo.ontoUml.model.Mixin;
 import br.ufes.inf.nemo.ontoUml.model.Mode;
 import br.ufes.inf.nemo.ontoUml.model.Phase;
@@ -24,7 +31,10 @@ import br.ufes.inf.nemo.ontoUml.model.Quantity;
 import br.ufes.inf.nemo.ontoUml.model.Relator;
 import br.ufes.inf.nemo.ontoUml.model.Role;
 import br.ufes.inf.nemo.ontoUml.model.RoleMixin;
+import br.ufes.inf.nemo.ontoUml.model.SubCollectionOf;
 import br.ufes.inf.nemo.ontoUml.model.SubKind;
+import br.ufes.inf.nemo.ontoUml.model.SubQuantityOf;
+import br.ufes.inf.nemo.patternDesigner.model.Association;
 import br.ufes.inf.nemo.patternDesigner.model.Class;
 import br.ufes.inf.nemo.patternDesigner.model.ModelingElement;
 import br.ufes.inf.nemo.patternDesigner.model.ModelingElementType;
@@ -55,8 +65,14 @@ public class XmlSchemaImporter {
 		String name;
 		String type;
 
+		String element;
+
+		ModelingElement origin, destiny;
+
 		ModelingElement modelingElement = null;
 		ModelingElementType modelingElementType;
+
+		int counterId = 0;
 
 		for (Element e : lista) {
 			name = e.getAttributeValue("name");
@@ -124,54 +140,108 @@ public class XmlSchemaImporter {
 						element1 = Integer.parseInt(element1Txt);
 					if (!element2Txt.trim().equals("0"))
 						element2 = Integer.parseInt(element2Txt);
-					// TODO tenho que fazer diferente aqui. O caso de
-					// generalizacao tenho que j� colocar os nomes e adicionar
-					// no SpecificModel para cada iteracao
+
 					modelingElement = new Generalization();
 					((Generalization) modelingElement)
 							.setOrigin((Class) specificModel.getModelingElements().get(element1));
 					((Generalization) modelingElement)
 							.setDestiny((Class) specificModel.getModelingElements().get(element2));
+
+					modelingElement.setName(name);
+					modelingElement.setId(counterId);
+
+					modelingElementType = new ModelingElementType();
+					modelingElementType.setName(type);
+
+					modelingElement.setModelingElementType(modelingElementType);
+
+					specificModel.getModelingElements().add(modelingElement);
+					specificModel.getModelingElementTypes().add(modelingElementType);
 				}
+
+				counterId++;
 
 				break;
 
 			// Associations
 			case InstantiableTypes.CHARACTERIZATION:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new Characterization();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
 			case InstantiableTypes.MEDIATION:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new Mediation();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
 			case InstantiableTypes.DERIVATION:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new Derivation();
+				// TODO Derivacao é diferente. Relaciona associacao com classe
+
+				// TODO implementar instanciacao do modelo
+
+				element = e.getChildren().get(0).getAttributeValue("type").split("\\.")[1];
+				int intElement = 0;
+				if (!element.equalsIgnoreCase("0"))
+					intElement = Integer.parseInt(element);
+
+				origin = null;
+
+				for (ModelingElement e1 : specificModel.getModelingElements()) {
+					if (e1.getId() == intElement)
+						origin = (ModelingElement) e1;
+
+				}
+
+				element = e.getChildren().get(1).getAttributeValue("type").split("\\.")[1];
+				intElement = 0;
+				if (!element.equalsIgnoreCase("0"))
+					intElement = Integer.parseInt(element);
+
+				destiny = null;
+
+				for (ModelingElement e1 : specificModel.getModelingElements()) {
+					if (e1.getId() == intElement)
+						destiny = (ModelingElement) e1;
+
+				}
+
+				((Association) modelingElement).setOrigin((ModelingElement) origin);
+				((Association) modelingElement).setDestiny((ModelingElement) destiny);
+
+				// modelingElement = extractAssociationData(specificModel, e,
+				// modelingElement);
+
 				break;
 			case InstantiableTypes.DOMAINFORMALRELATION:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new DomainFormalRelation();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
 			case InstantiableTypes.MATERIALRELATION:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new MaterialRelation();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
 			case InstantiableTypes.COMPONENTOF:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new ComponentOf();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
 			case InstantiableTypes.MEMBEROF:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new MemberOf();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
-			case InstantiableTypes.SUBCOLECTIONOF:
-				// TODO implementar
-				modelingElement = null;
+			case InstantiableTypes.SUBCOLLECTIONOF:
+				modelingElement = new SubCollectionOf();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
 			case InstantiableTypes.SUBQUANTITYOF:
-				// TODO implementar
-				modelingElement = null;
+				modelingElement = new SubQuantityOf();
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
+
 				break;
 
 			default:
@@ -179,8 +249,10 @@ public class XmlSchemaImporter {
 				break;
 			}
 
-			if (modelingElement != null) {
+			if ((modelingElement != null) && (!type.equalsIgnoreCase(InstantiableTypes.GENERALIZATIONSET))) {
 				modelingElement.setName(name);
+				modelingElement.setId(counterId);
+				counterId++;
 
 				modelingElementType = new ModelingElementType();
 				modelingElementType.setName(type);
@@ -194,6 +266,37 @@ public class XmlSchemaImporter {
 
 		return specificModel;
 
+	}
+
+	private ModelingElement extractAssociationData(SpecificModel specificModel, Element e,
+			ModelingElement modelingElement) {
+		String element;
+		ModelingElement origin;
+		ModelingElement destiny;
+
+		element = e.getChildren().get(0).getAttributeValue("name");
+
+		origin = null;
+
+		for (ModelingElement e1 : specificModel.getModelingElements()) {
+			if (e1.getName().equalsIgnoreCase(element))
+				origin = (Class) e1;
+
+		}
+
+		element = e.getChildren().get(1).getAttributeValue("name");
+
+		destiny = null;
+
+		for (ModelingElement e1 : specificModel.getModelingElements()) {
+			if (e1.getName().equalsIgnoreCase(element))
+				destiny = (Class) e1;
+
+		}
+
+		((Association) modelingElement).setOrigin((Class) origin);
+		((Association) modelingElement).setDestiny((Class) destiny);
+		return modelingElement;
 	}
 
 	public File loadXmlFile(String path) throws FileNotFoundException {
