@@ -1,4 +1,4 @@
-package br.ufes.nemo.graphBasedPatternRecognizer.domain;
+package br.ufes.inf.nemo.graphBasedPatternRecognizer.domain;
 
 public class Edge {
 	private String label;
