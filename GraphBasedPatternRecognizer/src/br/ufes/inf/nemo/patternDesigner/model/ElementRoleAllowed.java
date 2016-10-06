@@ -23,4 +23,5 @@ public class ElementRoleAllowed {
 			List<ModelingElementType> modelingElementTypes) {
 		this.modelingElementTypes = modelingElementTypes;
 	}
+
 }

@@ -1,5 +1,6 @@
 package br.ufes.inf.nemo.patternDesigner.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReferenceModel {
@@ -9,6 +10,8 @@ public class ReferenceModel {
 	private List<PatternType> patternTypes;
 
 	public List<PatternIndividual> getPatternIndividuals() {
+		if (patternIndividuals == null)
+			patternIndividuals = new ArrayList<PatternIndividual>();
 		return patternIndividuals;
 	}
 
@@ -17,6 +20,8 @@ public class ReferenceModel {
 	}
 
 	public List<ElementRole> getElementRoles() {
+		if (elementRoles == null)
+			elementRoles = new ArrayList<ElementRole>();
 		return elementRoles;
 	}
 
@@ -25,6 +30,8 @@ public class ReferenceModel {
 	}
 
 	public List<PatternType> getPatternTypes() {
+		if (patternTypes == null)
+			patternTypes = new ArrayList<PatternType>();
 		return patternTypes;
 	}
 

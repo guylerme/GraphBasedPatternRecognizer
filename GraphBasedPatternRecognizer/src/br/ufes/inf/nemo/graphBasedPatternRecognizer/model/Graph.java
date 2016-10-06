@@ -1,13 +1,14 @@
 package br.ufes.inf.nemo.graphBasedPatternRecognizer.model;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Graph {
 
 	private String id;
-	private Set<Graph> subGraphs;
-	private Set<Node> nodes;
-	private Set<Edge> edges;
+	private List<Graph> subGraphs;
+	private List<Node> nodes;
+	private List<Edge> edges;
 
 	public String getId() {
 		return id;
@@ -17,27 +18,34 @@ public class Graph {
 		this.id = id;
 	}
 
-	public Set<Graph> getSubGraphs() {
+	public List<Graph> getSubGraphs() {
+		if (subGraphs == null)
+			subGraphs = new ArrayList<Graph>();
 		return subGraphs;
 	}
 
-	public void setSubGraphs(Set<Graph> subGraphs) {
+	public void setSubGraphs(List<Graph> subGraphs) {
 		this.subGraphs = subGraphs;
 	}
 
-	public Set<Node> getNodes() {
+	public List<Node> getNodes() {
+		if (nodes == null)
+			nodes = new ArrayList<Node>();
+
 		return nodes;
 	}
 
-	public void setNodes(Set<Node> nodes) {
+	public void setNodes(List<Node> nodes) {
 		this.nodes = nodes;
 	}
 
-	public Set<Edge> getEdges() {
+	public List<Edge> getEdges() {
+		if (edges == null)
+			edges = new ArrayList<Edge>();
 		return edges;
 	}
 
-	public void setEdges(Set<Edge> edges) {
+	public void setEdges(List<Edge> edges) {
 		this.edges = edges;
 	}
 

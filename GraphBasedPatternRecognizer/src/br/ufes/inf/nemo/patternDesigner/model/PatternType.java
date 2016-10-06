@@ -1,5 +1,6 @@
 package br.ufes.inf.nemo.patternDesigner.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PatternType {
@@ -16,6 +17,8 @@ public class PatternType {
 	}
 
 	public List<ElementRoleAllowed> getElementRolesAllowed() {
+		if (elementRolesAllowed==null)
+			elementRolesAllowed = new ArrayList<ElementRoleAllowed>();
 		return elementRolesAllowed;
 	}
 
