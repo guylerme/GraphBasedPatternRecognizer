@@ -22,6 +22,6 @@ public class InstantiableTypes {
 	public static final String MEMBEROF = "memberof";
 	public static final String SUBCOLLECTIONOF = "subcolectionof";
 	public static final String SUBQUANTITYOF = "subquantityof";
-	public static final String GENERALIZATIONSET = "generalizationset";
+	public static final String GENERALIZATION = "generalizationset";
 
 }

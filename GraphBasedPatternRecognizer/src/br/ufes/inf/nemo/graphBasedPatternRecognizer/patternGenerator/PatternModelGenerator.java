@@ -19,7 +19,7 @@ public class PatternModelGenerator {
 	private final String RELATOR_TYPE = InstantiableTypes.RELATOR;
 	private final String MATERIAL_RELATION = InstantiableTypes.MATERIALRELATION;
 	private final String MEDIATION = InstantiableTypes.MEDIATION;
-	private final String GENERALIZATION = InstantiableTypes.GENERALIZATIONSET;
+	private final String GENERALIZATION = InstantiableTypes.GENERALIZATION;
 
 	public PatternType generateRelatorPattern() {
 
@@ -121,7 +121,7 @@ public class PatternModelGenerator {
 
 		patternType.setName("Kind Partition Pattern");
 
-		ElementRoleAllowed general, specific, generalization;
+		ElementRoleAllowed general, specific, generalization, generalizationSet;
 
 		// General
 		general = new ElementRoleAllowed();
@@ -133,7 +133,7 @@ public class PatternModelGenerator {
 		specific = new ElementRoleAllowed();
 		specific.setName("Specific");
 
-		general.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.KIND));
+		specific.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.KIND));
 
 		// Generalization
 		generalization = new AssociationElementRoleAllowed();
@@ -166,7 +166,7 @@ public class PatternModelGenerator {
 		phase = new ElementRoleAllowed();
 		phase.setName("Phase");
 
-		sortal.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.PHASE));
+		phase.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.PHASE));
 
 		// Generalization
 		generalization = new AssociationElementRoleAllowed();
@@ -199,7 +199,7 @@ public class PatternModelGenerator {
 		specific = new ElementRoleAllowed();
 		specific.setName("Specific");
 
-		general.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.QUANTITY));
+		specific.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.QUANTITY));
 
 		// Generalization
 		generalization = new AssociationElementRoleAllowed();
@@ -232,7 +232,7 @@ public class PatternModelGenerator {
 		role = new ElementRoleAllowed();
 		role.setName("Role");
 
-		sortal.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.ROLE));
+		role.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.ROLE));
 
 		// Generalization
 		generalization = new AssociationElementRoleAllowed();
@@ -265,7 +265,7 @@ public class PatternModelGenerator {
 		subkind = new ElementRoleAllowed();
 		subkind.setName("Subkind");
 
-		sortal.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.KIND + ","
+		subkind.setModelingElementTypes(this.createModelingElementTypeList(InstantiableTypes.KIND + ","
 				+ InstantiableTypes.SUBKIND + "," + InstantiableTypes.COLLECTIVE + "," + InstantiableTypes.QUANTITY));
 
 		// Generalization
@@ -299,12 +299,14 @@ public class PatternModelGenerator {
 		return typeList;
 	}
 
-	//TODO Implementar os demais padrões
-	//TODO Rever a questão dos padrões partitions, pois entra o conceito de generalization set, ou seja, para participar do padrão tem que estar na mesma generalization set
-	//TODO Mudar a forma de implementar a generalization, criando um novo no generalization set que seja o ponto de contato entre pai e filhos
-	//TODO Verificar como verificar padrões de partição para N filhos
-	
-	
+	// TODO Implementar os demais padrões
+	// TODO Rever a questão dos padrões partitions, pois entra o conceito de
+	// generalization set, ou seja, para participar do padrão tem que estar na
+	// mesma generalization set
+	// TODO Mudar a forma de implementar a generalization, criando um novo no
+	// generalization set que seja o ponto de contato entre pai e filhos
+	// TODO Verificar como verificar padrões de partição para N filhos
+
 	public ReferenceModel generateReferenceModel() {
 		ReferenceModel model = new ReferenceModel();
 		model.getPatternTypes().add(this.generateRelatorPattern());

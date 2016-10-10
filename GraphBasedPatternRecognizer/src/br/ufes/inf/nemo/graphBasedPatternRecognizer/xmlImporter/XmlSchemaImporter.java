@@ -18,6 +18,7 @@ import br.ufes.inf.nemo.ontoUml.model.ComponentOf;
 import br.ufes.inf.nemo.ontoUml.model.Derivation;
 import br.ufes.inf.nemo.ontoUml.model.DomainFormalRelation;
 import br.ufes.inf.nemo.ontoUml.model.Generalization;
+import br.ufes.inf.nemo.ontoUml.model.GeneralizationSet;
 import br.ufes.inf.nemo.ontoUml.model.InstantiableTypes;
 import br.ufes.inf.nemo.ontoUml.model.Kind;
 import br.ufes.inf.nemo.ontoUml.model.MaterialRelation;
@@ -41,7 +42,8 @@ import br.ufes.inf.nemo.patternDesigner.model.ModelingElementType;
 import br.ufes.inf.nemo.patternDesigner.model.SpecificModel;
 
 public class XmlSchemaImporter {
-	//private String path = "C:/Users/cy85/Documents/Doutorado/Tese/Graph Based Pattern Recognizer/example1.refontouml";
+	// private String path = "C:/Users/cy85/Documents/Doutorado/Tese/Graph Based
+	// Pattern Recognizer/example1.refontouml";
 	private String path = "/Users/Guylerme/Documents/Guylerme/Estudo/Doutorado/Tese/Graph Grammar/example1.refontouml";
 
 	public SpecificModel importXmlSchemaToModel(File fXmlFile) {
@@ -79,15 +81,13 @@ public class XmlSchemaImporter {
 			name = e.getAttributeValue("name");
 			System.out.println("Nome " + name);
 
-			Namespace XSI = Namespace.getNamespace("xsi",
-					"http://www.w3.org/2001/XMLSchema-instance");
+			Namespace XSI = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
 			String fullType = e.getAttributeValue("type", XSI);
 			type = fullType.split(":")[1];
 
 			System.out.println("Tipo " + type);
-			System.out.println("Visibilidade "
-					+ e.getAttributeValue("visibility"));
+			System.out.println("Visibilidade " + e.getAttributeValue("visibility"));
 
 			switch (type.toLowerCase()) {
 			// Classes
@@ -114,9 +114,13 @@ public class XmlSchemaImporter {
 				break;
 			case InstantiableTypes.PHASE:
 				modelingElement = new Phase();
+				// TODO Implementar a generalizacao pois no caso da Role isso
+				// vem como atributo e nao uma relacao
 				break;
 			case InstantiableTypes.ROLE:
 				modelingElement = new Role();
+				// TODO Implementar a generalizacao pois no caso da Role isso
+				// vem como atributo e nao uma relacao
 				break;
 			case InstantiableTypes.CATEGORY:
 				modelingElement = new Category();
@@ -128,43 +132,61 @@ public class XmlSchemaImporter {
 				modelingElement = new RoleMixin();
 				break;
 
-			case InstantiableTypes.GENERALIZATIONSET:
+			case InstantiableTypes.GENERALIZATION:
 				String generalization = e.getAttributeValue("generalization");
+				// A string vem com o valor neste formato
+				// //@packagedElement.1/@generalization.0
+				// //@packagedElement.2/@generalization.0
+
+				// Instancio uma Generalization Set
+				GeneralizationSet generalizationSet = new GeneralizationSet();
+
+				// Dividir a string em pares de generalizacao
 				String[] genPart = generalization.split("//");
 				String[] genSubPart;
 				int element1 = 0;
 				int element2 = 0;
-				String element1Txt,
-				element2Txt;
+				String element1Txt, element2Txt;
+				// Comecar a interacao neste vetor em 1 porque o primeiro
+				// elemento é vazio
 				for (int i = 1; i < genPart.length; i++) {
+					// Aqui eu separo somente os pares @packagedElement.1 e
+					// @generalization.0
 					genSubPart = genPart[i].split("/");
+					// Aqui tiro o elemento para pegar o indice do objeto
 					element1Txt = genSubPart[0].split("\\.")[1];
 					element2Txt = genSubPart[1].split("\\.")[1];
+					// Testo se o elemento é diferente de 0, pois nao consigo
+					// fazer parse de 0
 					if (!element1Txt.trim().equals("0"))
 						element1 = Integer.parseInt(element1Txt);
 					if (!element2Txt.trim().equals("0"))
 						element2 = Integer.parseInt(element2Txt);
 
-					modelingElement = new Generalization();
-					((Generalization) modelingElement)
-							.setOrigin((Class) specificModel
-									.getModelingElements().get(element1));
-					((Generalization) modelingElement)
-							.setDestiny((Class) specificModel
-									.getModelingElements().get(element2));
+					// Coloco o elemento filho dentro da Generalization Set
+					generalizationSet.getParticipantElements()
+							.add((Class) specificModel.getModelingElements().get(element1));
 
-					modelingElement.setName(name);
-					modelingElement.setId(counterId);
-
-					modelingElementType = new ModelingElementType();
-					modelingElementType.setName(type);
-
-					modelingElement.setModelingElementType(modelingElementType);
-
-					specificModel.getModelingElements().add(modelingElement);
-					specificModel.getModelingElementTypes().add(
-							modelingElementType);
 				}
+
+				// Digo que a generalizacao tem como origem a generalizationSet
+				// e o destino o pai
+				modelingElement = new Generalization();
+				((Generalization) modelingElement).setOrigin(generalizationSet);
+
+				((Generalization) modelingElement)
+						.setDestiny((Class) specificModel.getModelingElements().get(element2));
+
+				modelingElement.setName(name);
+				modelingElement.setId(counterId);
+
+				modelingElementType = new ModelingElementType();
+				modelingElementType.setName(type);
+
+				modelingElement.setModelingElementType(modelingElementType);
+
+				specificModel.getModelingElements().add(modelingElement);
+				specificModel.getModelingElementTypes().add(modelingElementType);
 
 				counterId++;
 
@@ -173,21 +195,18 @@ public class XmlSchemaImporter {
 			// Associations
 			case InstantiableTypes.CHARACTERIZATION:
 				modelingElement = new Characterization();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 			case InstantiableTypes.MEDIATION:
 				modelingElement = new Mediation();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 			case InstantiableTypes.DERIVATION:
 				modelingElement = new Derivation();
 
-				element = e.getChildren().get(0).getAttributeValue("type")
-						.split("\\.")[1];
+				element = e.getChildren().get(0).getAttributeValue("type").split("\\.")[1];
 				int intElement = 0;
 				if (!element.equalsIgnoreCase("0"))
 					intElement = Integer.parseInt(element);
@@ -200,8 +219,7 @@ public class XmlSchemaImporter {
 
 				}
 
-				element = e.getChildren().get(1).getAttributeValue("type")
-						.split("\\.")[1];
+				element = e.getChildren().get(1).getAttributeValue("type").split("\\.")[1];
 				intElement = 0;
 				if (!element.equalsIgnoreCase("0"))
 					intElement = Integer.parseInt(element);
@@ -214,10 +232,8 @@ public class XmlSchemaImporter {
 
 				}
 
-				((Association) modelingElement)
-						.setOrigin((ModelingElement) origin);
-				((Association) modelingElement)
-						.setDestiny((ModelingElement) destiny);
+				((Association) modelingElement).setOrigin((ModelingElement) origin);
+				((Association) modelingElement).setDestiny((ModelingElement) destiny);
 
 				// modelingElement = extractAssociationData(specificModel, e,
 				// modelingElement);
@@ -225,38 +241,32 @@ public class XmlSchemaImporter {
 				break;
 			case InstantiableTypes.DOMAINFORMALRELATION:
 				modelingElement = new DomainFormalRelation();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 			case InstantiableTypes.MATERIALRELATION:
 				modelingElement = new MaterialRelation();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 			case InstantiableTypes.COMPONENTOF:
 				modelingElement = new ComponentOf();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 			case InstantiableTypes.MEMBEROF:
 				modelingElement = new MemberOf();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 			case InstantiableTypes.SUBCOLLECTIONOF:
 				modelingElement = new SubCollectionOf();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 			case InstantiableTypes.SUBQUANTITYOF:
 				modelingElement = new SubQuantityOf();
-				modelingElement = extractAssociationData(specificModel, e,
-						modelingElement);
+				modelingElement = extractAssociationData(specificModel, e, modelingElement);
 
 				break;
 
@@ -265,9 +275,7 @@ public class XmlSchemaImporter {
 				break;
 			}
 
-			if ((modelingElement != null)
-					&& (!type
-							.equalsIgnoreCase(InstantiableTypes.GENERALIZATIONSET))) {
+			if ((modelingElement != null) && (!type.equalsIgnoreCase(InstantiableTypes.GENERALIZATION))) {
 				modelingElement.setName(name);
 				modelingElement.setId(counterId);
 				counterId++;
@@ -278,8 +286,7 @@ public class XmlSchemaImporter {
 				modelingElement.setModelingElementType(modelingElementType);
 
 				specificModel.getModelingElements().add(modelingElement);
-				specificModel.getModelingElementTypes()
-						.add(modelingElementType);
+				specificModel.getModelingElementTypes().add(modelingElementType);
 			}
 		}
 
@@ -287,8 +294,8 @@ public class XmlSchemaImporter {
 
 	}
 
-	private ModelingElement extractAssociationData(SpecificModel specificModel,
-			Element e, ModelingElement modelingElement) {
+	private ModelingElement extractAssociationData(SpecificModel specificModel, Element e,
+			ModelingElement modelingElement) {
 		String element;
 		ModelingElement origin;
 		ModelingElement destiny;
